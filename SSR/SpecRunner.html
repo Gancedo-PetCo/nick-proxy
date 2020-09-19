@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reviews Service Spec Runner</title>
+    <meta charset="utf-8" />
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script crossorigin src="https://unpkg.com/chai/chai.js"></script>
+    <script crossorigin src="https://unpkg.com/mocha/mocha.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+  </head>
+  <body>
+    <iframe id="proxy-index-dot-html-file"
+      title="Inline Frame Example"
+      width="1"
+      height="1"
+      src="http://127.0.0.1:3000/product?itemID=100">
+    </iframe>
+
+    <div id='wait'>PLEASE WAIT 3 SECONDS BEFORE TESTS LOAD</div>
+
+    <div id="mocha"></div>
+
+
+    <script class="mocha-init">
+      mocha.setup('bdd');
+      mocha.checkLeaks();
+    </script>
+
+    <script src='tests.js'></script>
+
+    <script class="mocha-exec">
+      setTimeout(() => {
+        const iframe = document.getElementById('proxy-index-dot-html-file');
+        window.iframeDOM = iframe.contentWindow.document;
+        document.getElementById('wait').remove();
+
+        mocha.run();
+      }, 3000);
+    </script>
+  </body>
+
+</html>

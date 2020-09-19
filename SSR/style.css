@@ -1,0 +1,71 @@
+.gallery {
+  position: relative;
+  width: 328px;
+}
+
+.galleryPreview {
+  position: absolute;
+  top: 0;
+  left: 345px;
+  width:340px;
+  height:409px;
+  background-repeat: no-repeat;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  box-shadow: 0 0 10px 5px rgba(0,0,0,0.1);
+  z-index: 30;
+}
+
+.galleryMainImageDiv {
+  border: 1px solid #d4dadc;
+}
+
+.galleryMainImage {
+  display: block;
+  max-width: 100%;
+  height: 327px;
+  width: 327px;
+}
+
+.galleryZoomIconAndText {
+  text-align: center;
+  padding: 10px;
+  margin-left: 2px;
+}
+
+.galleryZoomIcon {
+  background-image: url("/petcoIcons.webp");
+  background-position: -96px -31px;
+  background-size: 500px;
+  opacity: .5;
+  height: 18px;
+  width: 25px;
+  display: inline-block;
+}
+
+.galleryZoomText {
+  font-size: .8125em;
+  color: #656565;
+  font-weight: bold;
+  font-family: Arial,sans-serif;
+  display: inline-block;
+  margin-left: -1px;
+}
+
+.gallerySmallImages {
+  margin-left: 20px;
+}
+
+.gallerySmallImage {
+  height: 59px;
+  width: 59px;
+  margin: 8px 13px 1px 0px;
+  border: 1px solid #d4dadc;
+  cursor: pointer;
+}
+
+.gallerySmallImage.galleryImageSelected {
+  border: 2px solid rgb(0, 88, 145);
+  margin: 7px 12px 0px 0px;
+}
