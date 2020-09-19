@@ -1,14 +1,15 @@
 const express = require('express');
 const serveStatic = require('serve-static');
-const morgan = require('morgan');
+// const morgan = require('morgan');
+require('newrelic');
 
 const server = express();
 
-server.use(morgan('dev'));
+// server.use(morgan('dev'));
 server.use(serveStatic('./client/'));
 
-server.get('/product', (req, res) => {
-  const { itemID } = req.query;
+server.get('/product/:itemId', (req, res) => {
+  const { itemID } = req.params;
   const itemIdNumber = Number.parseInt(itemID, 10);
 
   if (itemIdNumber < 100 || itemIdNumber > 199 || itemIdNumber === undefined) {

@@ -4,8 +4,10 @@
   "description": "A PetToyCo proxy server that correctly mounts the individual PetToyCo services",
   "main": "index.js",
   "scripts": {
-    "server": "node index.js",
-    "lint": "eslint . --ext .js"
+    "start": "node index.js",
+    "lint": "eslint . --ext .js",
+    "test": "jest --runInBand --silent",
+    "testRPS": "node server/testServerRPS.js"
   },
   "repository": {
     "type": "git",
@@ -22,9 +24,12 @@
   },
   "homepage": "https://github.com/PetToyCo/nick-proxy-server#readme",
   "dependencies": {
+    "axios": "^0.20.0",
     "express": "^4.17.1",
-    "serve-static": "^1.14.1",
-    "morgan": "^1.10.0"
+    "jest": "^26.4.2",
+    "morgan": "^1.10.0",
+    "newrelic": "^6.13.0",
+    "serve-static": "^1.14.1"
   },
   "devDependencies": {
     "eslint": "^7.3.1",
