@@ -38,6 +38,7 @@ const testsStorage = new Map();
 // testsStorage.set('1RPS', 1);
 // testsStorage.set('10RPS', 10);
 // testsStorage.set('100RPS', 100);
+// testsStorage.set('180RPS', 180);
 // testsStorage.set('200RPS', 200);
 // testsStorage.set('250RPS', 250);
 // testsStorage.set('300RPS', 300);
@@ -47,6 +48,8 @@ const testsStorage = new Map();
 // testsStorage.set('500RPS', 500);
 // testsStorage.set('550RPS', 550);
 // testsStorage.set('600RPS', 600);
+// testsStorage.set('700RPS', 700);
+// testsStorage.set('800RPS', 800);
 testsStorage.set('1000RPS', 1000);
 
 //To run a test where the traffic throughout the day is expected to be the same items, more or less, for a long

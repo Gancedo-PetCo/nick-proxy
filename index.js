@@ -2,9 +2,10 @@ const express = require('express');
 const serveStatic = require('serve-static');
 const axios = require('axios');
 const fs = require('fs');
+const { promisifyAll } = require('bluebird');
 const { ImagesSecret } = require('./config.js');
 // const morgan = require('morgan');
-// require('newrelic');
+require('newrelic');
 
 const server = express();
 const PORT = 3000;
@@ -22,7 +23,7 @@ if (mode === 'CSR') {
     const { itemID } = req.params;
     const itemIdNumber = Number.parseInt(itemID, 10);
 
-    if (itemIdNumber < 100 || itemIdNumber > 199 || itemIdNumber === undefined) {
+    if (itemIdNumber < 100 || itemIdNumber > 10000099 || itemIdNumber === undefined) {
       res.status(404).send('itemID invalid');
     } else {
       res.sendFile(`${__dirname}/client/index.html`);
@@ -93,7 +94,11 @@ if (mode === 'CSR') {
       const React = require('react');
       const ReactDOMServer = require('react-dom/server');
       const generateHtmlSSR = require('./server/indexHTMLTemplate.js');
+      const redis = require('redis');
       require('@babel/register');
+
+      const client = redis.createClient();
+      promisifyAll(client);
 
       const services = [
         ['http://127.0.0.1:3003/itemImages/', 'images', './Modules/Images/index.jsx'],
@@ -136,12 +141,27 @@ if (mode === 'CSR') {
         const { itemId } = req.params;
         const itemIdNumber = Number.parseInt(itemId, 10);
 
-        if (itemIdNumber < 100 || itemIdNumber > 199 || itemIdNumber === undefined) {
+        if (itemIdNumber < 100 || itemIdNumber > 10000099 || itemIdNumber === undefined) {
           res.status(404).send('itemID invalid');
         } else {
-          generateSSR(itemId)
-            .then((SSR) => {
-              res.status(200).send(SSR);
+          client.getAsync(`pSSR${itemId}`)
+            .then((response) => {
+              if (response) {
+                res.status(200).send(response);
+              } else {
+                generateSSR(itemId)
+                  .then((SSR) => {
+                    res.status(200).send(SSR);
+                    client.setAsync(`pSSR${itemId}`, SSR)
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                    res.status(500).send(err);
+                  });
+              }
             })
             .catch((err) => {
               console.log(err);
