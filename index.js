@@ -5,7 +5,7 @@ const fs = require('fs');
 const { promisifyAll } = require('bluebird');
 const { ImagesSecret } = require('./config.js');
 // const morgan = require('morgan');
-require('newrelic');
+// require('newrelic');
 
 const server = express();
 const PORT = 3000;
@@ -44,6 +44,11 @@ if (mode === 'CSR') {
   //Start SSR
   //-------------------------------------------
 } else if (mode === 'SSR') {
+  //-------------
+  //This first seciton of code is responsible for contacting all services and fetching bundles/module files
+  //and then saving them to disc
+  //-------------
+
   server.use(serveStatic('./SSR/'));
   //For every service, enter a tuple with position 0 as URL address to get bundle and position 0 as file path/file name
   //to store that bundle locally. Whenever adding a new bundle, don't forget to increase SRRcountTotal
@@ -86,9 +91,13 @@ if (mode === 'CSR') {
         res.status(500).send(err);
       });
   });
-  //---------------------------------
-  //Start actual SSR generating code
-  //---------------------------------
+  //-------------
+  //Start actual SSR generating code. As can be seen below, initiatePublicFacingSRRCode is a recursive function
+  //which is always called with setTimeout. Basically, the funciton checks if all modules and bundles from
+  //the services currently supported, have been saved to disc. If they have, then the server performs the tasks
+  //needed to perform SSR and, finally, connects the server to the correct port. Otherwise, setTimepout is called
+  //again on initiatePublicFacingSRRCode.
+  //-------------
   const initiatePublicFacingSRRCode = function() {
     if (SSRcount === SSRcountTotal) {
       const React = require('react');
@@ -100,6 +109,11 @@ if (mode === 'CSR') {
       const client = redis.createClient();
       promisifyAll(client);
 
+      //every service has a triplet array saved in the object "services". The value at position 0 is the URL
+      //address needed to retrieve the API data necessary for SSR. Position 1 is for the key in which
+      //the service specific SSR code will be saved to, in serviceModules. Position 2 is where the
+      //entry file for the service's modules are located, locally. (which were retrieved above when the line
+      //of code satrting with moduleLocations.forEach  was executed, above)
       const services = [
         ['http://127.0.0.1:3003/itemImages/', 'images', './Modules/Images/index.jsx'],
       ];

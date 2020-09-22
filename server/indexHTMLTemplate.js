@@ -55,7 +55,7 @@ module.exports = function(imagesServiceData) {
       observer.observe(targetNode, config);
     </script>
 
-    <script crossorigin src="http://127.0.0.1:3000/imagesBundle.js" ></script>
+    <script src=/imagesBundle.js"></script>
   </html>
   `;
 };
