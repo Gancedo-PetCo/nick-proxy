@@ -1,14 +1,9 @@
 # Proxy-Server-Nick
- A proxy server for PetToyCo that relies on the six services listed in "Related Projects"
+ A proxy server for PetToyCo that relies on the services listed in "Related Projects"
 
 ## Related Projects
 
-  - https://github.com/PetToyCo/photo-gallery
-  - https://github.com/PetToyCo/description_directions_attributes_
-  - https://github.com/PetToyCo/mainTitle_price
-  - https://github.com/PetToyCo/reviews
-  - https://github.com/PetToyCo/ProductRecommendations
-  - https://github.com/PetToyCo/deliver-pickup
+  - https://github.com/Gancedo-Petco/image-service
 
 ## Table of Contents
 
@@ -21,15 +16,19 @@
 To use this proxy server:
 
 1. From project's root directory, >npm install
-2. Download each of the above repos (in the section "Related Projects". Each repo represents a service to this proxy) into its own unique directory. Then follow the instructions in each ReadMe - for each service - for how to seed a MongoDB instance running on your computer, with data. Also, follow the instructions for starting each of the service's servers.
-3. Then start the proxy's server by making the proxy's root directory the cd in terminal and running >npm run server
+2. Download each of the above repos (in the section "Related Projects". Each repo represents a service to this proxy) into its own unique directory. Then follow the instructions in each ReadMe - for each service - for how to get the service up and running.
+3. Then start the proxy's server by running >npm run start
 4. Visit any page that follows the form:
-http://127.0.0.1:3000/product?itemID='value 100 to 199 without the quotes'
-
-5. To run the tests, visit the following link (after following the special note below):
+http://127.0.0.1:3000/### where ### is any number between 100 to 10,000,099  (but without commas)
+5. To run Unit tests, >npm run test
+6. To run integration tests, visit the following link (after following the special note below):
 http://127.0.0.1:3000/SpecRunner.html
-NOTE: as the page that loads tells you, you have to wait before the tests will run. This is to give the embedded iframe the chance to load the proxy's html file, followed by that html file sending out get requests for the service components, followed by those components sending out requests for data.
-5. See section below on deployment, if you want to deploy the proxy server.
+NOTE: as the page that loads tells you, you have to wait before the tests will run. This is to give the embedded iframe the chance to load the proxy's html file, followed by that html file sending out get requests for the service components, followed by those components sending out requests for data. Only then do the tests run.
+
+
+Anything below this line is outdated
+--------------------------------
+7. See section below on deployment, if you want to deploy the proxy server.
 
 SPECIAL NOTE: For one of the tests to pass, you currently have to make a modification to it before running the spec runner. To do this, follow these steps
 1. In your mongo terminal instance:
