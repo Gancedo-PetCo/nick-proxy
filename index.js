@@ -3,12 +3,14 @@ const serveStatic = require('serve-static');
 const axios = require('axios');
 const fs = require('fs');
 const { promisifyAll } = require('bluebird');
-const { ImagesSecret } = require('./config.js');
+const { ImagesSecret, ImagesIP } = require('./config.js');
+const cors = require('cors');
 // const morgan = require('morgan');
-// require('newrelic');
+require('newrelic');
 
 const server = express();
 const PORT = 3000;
+server.use(cors());
 
 // server.use(morgan('dev'));
 // const mode = 'CSR';
@@ -52,7 +54,7 @@ if (mode === 'CSR') {
   server.use(serveStatic('./SSR/'));
   //For every service, enter a tuple with position 0 as URL address to get bundle and position 0 as file path/file name
   //to store that bundle locally. Whenever adding a new bundle, don't forget to increase SRRcountTotal
-  const bundleLocations = [['http://127.0.0.1:3003/bundle.js', './SSR/imagesBundle.js']];
+  const bundleLocations = [[`http://${ImagesIP}:3003/bundle.js`, './SSR/imagesBundle.js']];
 
   bundleLocations.forEach((bundleTuple) => {
     axios.get(bundleTuple[0])
@@ -71,8 +73,8 @@ if (mode === 'CSR') {
   //a key is needed to retrieve them. As such, inner arrays are triplets. SSRcountTotal should be increased by 1 per
   //module
   const moduleLocations = [
-    ['http://127.0.0.1:3003/module/index.jsx', './Modules/Images/index.jsx', ImagesSecret],
-    ['http://127.0.0.1:3003/module/Gallery.jsx', './Modules/Images/Gallery.jsx', ImagesSecret],
+    [`http://${ImagesIP}:3003/module/index.jsx`, './Modules/Images/index.jsx', ImagesSecret],
+    [`http://${ImagesIP}:3003/module/Gallery.jsx`, './Modules/Images/Gallery.jsx', ImagesSecret],
   ];
 
   moduleLocations.forEach((moduleTriplet) => {
@@ -115,7 +117,7 @@ if (mode === 'CSR') {
       //entry file for the service's modules are located, locally. (which were retrieved above when the line
       //of code satrting with moduleLocations.forEach  was executed, above)
       const services = [
-        ['http://127.0.0.1:3003/itemImages/', 'images', './Modules/Images/index.jsx'],
+        [`http://${ImagesIP}:3003/itemImages/`, 'images', './Modules/Images/index.jsx'],
       ];
 
       const serviceModules = {};
@@ -204,7 +206,7 @@ if (mode === 'CSR') {
   server.get('/itemImages/:itemId', (req, res) => {
     const { itemId } = req.params;
 
-    axios.get(`http://127.0.0.1:3003/itemImages/${itemId}`)
+    axios.get(`http://${ImagesIP}:3003/itemImages/${itemId}`)
       .then((response) => {
         const { data } = response;
         res.status(200).send(data);
