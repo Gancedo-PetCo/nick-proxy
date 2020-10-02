@@ -7,9 +7,9 @@
 
 ## Table of Contents
 
-1. [Usage](#Usage)
-1. [Requirements](#requirements)
-1. [Development](#development)
+1. Usage
+2. Deployment
+3. Requirements
 
 ## Usage
 
@@ -19,11 +19,59 @@ To use this proxy server:
 2. Download each of the above repos (in the section "Related Projects". Each repo represents a service to this proxy) into its own unique directory. Then follow the instructions in each ReadMe - for each service - for how to get the service up and running.
 3. Then start the proxy's server by running >npm run start
 4. Visit any page that follows the form:
-http://127.0.0.1:3000/### where ### is any number between 100 to 10,000,099  (but without commas)
+http://127.0.0.1:3000/product/### where ### is any number between 100 to 10,000,099  (but without commas)
 5. To run Unit tests, >npm run test
 6. To run integration tests, visit the following link (after following the special note below):
 http://127.0.0.1:3000/SpecRunner.html
 NOTE: as the page that loads tells you, you have to wait before the tests will run. This is to give the embedded iframe the chance to load the proxy's html file, followed by that html file sending out get requests for the service components, followed by those components sending out requests for data. Only then do the tests run.
+
+## Deployment
+1. If necessary, launch a fresh AWS EC2 instance with Amazon Linux AMI 2018.03.0 (HVM), SSD Volume Type, x64
+2. Assign Elastic IP to instance
+3. Update bashScript.sh through bashScript6.sh. Examples are fouund in ./bashScripts. Make duplicates and remove the .example portion. Then update with relevant info. Note you need a Docker Hub account and repo to run these scripts. You also need to update bashScript2.sh and bashScript6.sh with the correct imageId after running bashScript.sh
+4. SSH into AWS EC2 instance using bashScript3.sh.
+5. Install Redis on AWS EC2 instance
+a.  >sudo yum install git -y
+b. >/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+c. >sudo yum groupinstall 'Development Tools'
+d. >echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> /home/ec2-user/.bash_profile
+e. >eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+f. >brew install gcc
+g. >brew install redis
+6. After redis is done installing, it reports what terminal command to run so you can audit redis config file and which command to run to launch redis server using that config file. Mine were:
+>sudo nano /home/linuxbrew/.linuxbrew/etc/redis.conf
+>redis-server /home/linuxbrew/.linuxbrew/etc/redis.conf
+7. Run >sudo nano /home/linuxbrew/.linuxbrew/etc/redis.conf  and then make the following changes:
+a. In General, change daemonize from no to yes
+b. In Snapshotting, comment out any variable that begins with "save"
+c. In Memory Management, uncomment maxmemory and change to 400MB
+d. In Memory Management, uncomment maxmemory-policy and change to allkeys-lfu
+e. In Memory Management, uncomment maxmemory-samples and change to 7
+8. Save changes in Linux format and then start server with >redis-server /home/linuxbrew/.linuxbrew/etc/redis.conf
+9. Install Docker on AWS EC2 instance
+a. >sudo ym update -y
+b. >sudo yum install -y docker
+c. >sudo service docker start
+d. >sudo usermod -a -G docker ec2-user
+e. >exit
+10. The exit command should kick you out of your SSH session. This is needed so part d can take affect and allow docker commands to run without sudo. If you SSHed with bashScript3.sh, then you can simply hit the up arrow key in the same terminal window and hit enter to reSSH
+11. In a new terminal window, cd to project's root folder. Now is the time to update config.js with the IP address for the server instances the proxy will connect to. Also any secrets the services expect to receive.
+12. Now run bashScript.sh to build image
+13. Once script finishes, copy imageId to bashScript2.sh and bashScript6.sh. Then run bashScript2.sh
+14. Back in the AWS EC2 SSH, log into docker with >docker login --username="your Docker Hub username, without quotes" and enter password when prompted.
+15. Once bashScript2.sh finishes running, built image will be on Docker Hub. You can pull it to AWS EC2 instance by copying, pasting, and running code in bashScript5.sh into SSH shell
+16. If you have a previous image for this proxy running on the AWS EC2 instance, you can use bashScript4.sh to stop it by first running >docker ps    and then copying/pasting old container/image Ids to appropriate fields in bashScript4.sh. Then copy/paste/execute bashScript4.sh code in SSH shell.
+17. Confirm all services proxy depends on are running and then initiate proxy by copy/paste/execute bashScipt6.sh code into SSH shell
+18. Confirm proxy is running by visiting http://"IP address for AWS EC2 instance, without quotes":3000/product/### where ### can be any integer number between 100 to 10,000,099, without quotes
+
+
+## Requirements
+
+- Node 12.16.1
+
+
+
+
 
 
 Anything below this line is outdated
