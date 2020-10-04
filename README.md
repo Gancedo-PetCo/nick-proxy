@@ -29,7 +29,7 @@ NOTE: as the page that loads tells you, you have to wait before the tests will r
 1. If necessary, launch a fresh AWS EC2 instance with Amazon Linux AMI 2018.03.0 (HVM), SSD Volume Type, x64
 2. Assign Elastic IP to instance
 3. Update bashScript.sh through bashScript6.sh. Examples are fouund in ./bashScripts. Make duplicates and remove the .example portion. Then update with relevant info. Note you need a Docker Hub account and repo to run these scripts. You also need to update bashScript2.sh and bashScript6.sh with the correct imageId after running bashScript.sh
-4. SSH into AWS EC2 instance using bashScript3.sh.
+4. SSH into AWS EC2 instance using bashScript3.sh
 5. Install Redis on AWS EC2 instance
 a.  >sudo yum install git -y
 b. >/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
@@ -38,15 +38,14 @@ d. >echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> /home/ec2-use
 e. >eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 f. >brew install gcc
 g. >brew install redis
-6. After redis is done installing, it reports what terminal command to run so you can audit redis config file and which command to run to launch redis server using that config file. Mine were:
+6. After redis is done installing, it reports what terminal command to run so you can alter redis config file and which command to run to launch redis server using that config file. Mine were:
 >sudo nano /home/linuxbrew/.linuxbrew/etc/redis.conf
 >redis-server /home/linuxbrew/.linuxbrew/etc/redis.conf
 7. Run >sudo nano /home/linuxbrew/.linuxbrew/etc/redis.conf  and then make the following changes:
-a. In General, change daemonize from no to yes
-b. In Snapshotting, comment out any variable that begins with "save"
-c. In Memory Management, uncomment maxmemory and change to 400MB
-d. In Memory Management, uncomment maxmemory-policy and change to allkeys-lfu
-e. In Memory Management, uncomment maxmemory-samples and change to 7
+a. In Snapshotting, comment out any variable that begins with "save"
+b. In Memory Management, uncomment maxmemory and change to 400MB
+c. In Memory Management, uncomment maxmemory-policy and change to allkeys-lfu
+d. In Memory Management, uncomment maxmemory-samples and change to 7
 8. Save changes in Linux format and then start server with >redis-server /home/linuxbrew/.linuxbrew/etc/redis.conf
 9. Install Docker on AWS EC2 instance
 a. >sudo ym update -y
@@ -55,13 +54,13 @@ c. >sudo service docker start
 d. >sudo usermod -a -G docker ec2-user
 e. >exit
 10. The exit command should kick you out of your SSH session. This is needed so part d can take affect and allow docker commands to run without sudo. If you SSHed with bashScript3.sh, then you can simply hit the up arrow key in the same terminal window and hit enter to reSSH
-11. In a new terminal window, cd to project's root folder. Now is the time to update config.js with the IP address for the server instances the proxy will connect to. Also any secrets the services expect to receive.
+11. In a new terminal window, cd to project's root folder. Now is the time to update ./config.js with the IP address for the server instances the proxy will connect to. Also any secrets the services expect to receive.
 12. Now run bashScript.sh to build image
-13. Once script finishes, copy imageId to bashScript2.sh and bashScript6.sh. Then run bashScript2.sh
+13. Once script finishes, copy imageId to bashScript2.sh and bashScript6.sh. Save and then run bashScript2.sh
 14. Back in the AWS EC2 SSH, log into docker with >docker login --username="your Docker Hub username, without quotes" and enter password when prompted.
 15. Once bashScript2.sh finishes running, built image will be on Docker Hub. You can pull it to AWS EC2 instance by copying, pasting, and running code in bashScript5.sh into SSH shell
 16. If you have a previous image for this proxy running on the AWS EC2 instance, you can use bashScript4.sh to stop it by first running >docker ps    and then copying/pasting old container/image Ids to appropriate fields in bashScript4.sh. Then copy/paste/execute bashScript4.sh code in SSH shell.
-17. Confirm all services proxy depends on are running and then initiate proxy by copy/paste/execute bashScipt6.sh code into SSH shell
+17. Confirm all services the proxy depends on are running and then initiate proxy by copy/paste/execute bashScipt6.sh code into SSH shell
 18. Confirm proxy is running by visiting http://"IP address for AWS EC2 instance, without quotes":3000/product/### where ### can be any integer number between 100 to 10,000,099, without quotes
 
 

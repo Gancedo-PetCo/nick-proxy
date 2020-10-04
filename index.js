@@ -15,7 +15,7 @@ server.use(cors());
 // server.use(morgan('dev'));
 // const mode = 'CSR';
 const mode = 'SSR';
-const SSRcountTotal = 3;
+const SSRcountTotal = 4;
 let SSRcount = 0;
 
 if (mode === 'CSR') {
@@ -51,7 +51,7 @@ if (mode === 'CSR') {
   //and then saving them to disc
   //-------------
 
-  server.use(serveStatic('./SSR/'));
+  server.use(serveStatic('SSR'));
   //For every service, enter a tuple with position 0 as URL address to get bundle and position 0 as file path/file name
   //to store that bundle locally. Whenever adding a new bundle, don't forget to increase SRRcountTotal
   const bundleLocations = [[`http://${ImagesIP}:3003/bundle.js`, './SSR/imagesBundle.js']];
@@ -75,6 +75,7 @@ if (mode === 'CSR') {
   const moduleLocations = [
     [`http://${ImagesIP}:3003/module/index.jsx`, './Modules/Images/index.jsx', ImagesSecret],
     [`http://${ImagesIP}:3003/module/Gallery.jsx`, './Modules/Images/Gallery.jsx', ImagesSecret],
+    [`http://${ImagesIP}:3003/module/CSS.js`, './Modules/Images/CSS.js', ImagesSecret],
   ];
 
   moduleLocations.forEach((moduleTriplet) => {

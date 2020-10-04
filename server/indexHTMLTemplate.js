@@ -4,11 +4,6 @@ module.exports = function(imagesServiceData) {
   <html>
     <head>
       <title>A PetToyCo proxy server</title>
-      <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
-      <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
-      <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
-      <script crossorigin src="https://momentjs.com/downloads/moment.min.js"></script>
-      <link rel="stylesheet" href="http://127.0.0.1:3000/style.css"></link>
     </head>
     <body >
       <div
@@ -55,7 +50,11 @@ module.exports = function(imagesServiceData) {
       observer.observe(targetNode, config);
     </script>
 
-    <script src=/imagesBundle.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script crossorigin src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="/imagesBundle.js"></script>
   </html>
   `;
 };
