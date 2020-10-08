@@ -217,4 +217,18 @@ if (mode === 'CSR') {
         res.status(500).send(err);
       });
   });
+
+  server.post('/addItemImages/:itemId', (req, res) => {
+    const { itemId } = req.params;
+    const { itemImages } = req.query;
+
+    axios.post(`http://${ImagesIP}:3003/addItemImages/${itemId}?itemImages=${itemImages}`)
+      .then((response) => {
+        res.status(201).send(`Item ${itemId} successfully added to database`);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send(err);
+      });
+  });
 }
