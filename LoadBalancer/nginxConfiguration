@@ -1,0 +1,20 @@
+
+http {
+  upstream gptc {
+    hash $uri consistent;
+    server "IP:port for proxy1 goes here, without quotes";
+    server "IP:port for proxy2 goes here, without quotes";
+    server "IP:port for proxy3 goes here, without quotes";
+    server "IP:port for proxy4 goes here, without quotes";
+    server "IP:port for proxy5 goes here, without quotes";
+    server "IP:port for proxy6 goes here, without quotes";
+  }
+
+  server {
+    listen 3000;
+
+    location / {
+      proxy_pass http://gptc;
+    }
+  }
+}
