@@ -3,10 +3,17 @@ const serveStatic = require('serve-static');
 const axios = require('axios');
 const fs = require('fs');
 const { promisifyAll } = require('bluebird');
-const { ImagesSecret, ImagesIP } = require('./config.js');
 const cors = require('cors');
+const {
+  ImagesSecret,
+  ImagesIPPort,
+  // DelPickupSecret,
+  // DelPickupIPPort,
+  // DescriptionSecret,
+  // DescriptionIPPort
+} = require('./config.js');
 // const morgan = require('morgan');
-require('newrelic');
+// require('newrelic');
 
 const server = express();
 const PORT = 3000;
@@ -54,7 +61,11 @@ if (mode === 'CSR') {
   server.use(serveStatic('SSR'));
   //For every service, enter a tuple with position 0 as URL address to get bundle and position 0 as file path/file name
   //to store that bundle locally. Whenever adding a new bundle, don't forget to increase SRRcountTotal
-  const bundleLocations = [[`http://${ImagesIP}:3003/bundle.js`, './SSR/imagesBundle.js']];
+  const bundleLocations = [
+    [`http://${ImagesIPPort}/bundle.js`, './SSR/imagesBundle.js'],
+    // [`http://${DelPickupIPPort}/bundle.js`, './SSR/delPickupBundle.js'],
+    // [`http://${DescriptionIPPort}/bundle.js`, './SSR/descriptionBundle.js']
+  ];
 
   bundleLocations.forEach((bundleTuple) => {
     axios.get(bundleTuple[0])
@@ -73,9 +84,27 @@ if (mode === 'CSR') {
   //a key is needed to retrieve them. As such, inner arrays are triplets. SSRcountTotal should be increased by 1 per
   //module
   const moduleLocations = [
-    [`http://${ImagesIP}:3003/module/index.jsx`, './Modules/Images/index.jsx', ImagesSecret],
-    [`http://${ImagesIP}:3003/module/Gallery.jsx`, './Modules/Images/Gallery.jsx', ImagesSecret],
-    [`http://${ImagesIP}:3003/module/CSS.js`, './Modules/Images/CSS.js', ImagesSecret],
+    [`http://${ImagesIPPort}/module/index.jsx`, './Modules/Images/index.jsx', ImagesSecret],
+    [`http://${ImagesIPPort}/module/Gallery.jsx`, './Modules/Images/Gallery.jsx', ImagesSecret],
+    [`http://${ImagesIPPort}/module/CSS.js`, './Modules/Images/CSS.js', ImagesSecret],
+
+    // [`http://${DelPickupIPPort}/module/app.jsx`, './Modules/DescDelPickupiption/app.jsx', DelPickupSecret],
+    // [`http://${DelPickupIPPort}/app.jsx`, './Modules/DelPickup/app.jsx', DelPickupSecret],
+    // [`http://${DelPickupIPPort}/module/DeliverPickup.jsx`, './Modules/DescDelPickupiption/DeliverPickup.jsx', DelPickupSecret],
+    // [`http://${DelPickupIPPort}/DeliverPickup.jsx`, './Modules/DelPickup/DeliverPickup.jsx', DelPickupSecret],
+
+    // [`http://${DescriptionIPPort}/module/index.jsx`, './Modules/Description/index.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/index.jsx`, './Modules/Description/index.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/module/Description.jsx`, './Modules/Description/Description.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/Components/Description.jsx`, './Modules/Description/Components/Description.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/module/Directions.jsx`, './Modules/Description/Directions.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/Components/Directions.jsx`, './Modules/Description/Components/Directions.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/module/Attributes.jsx`, './Modules/Description/Attributes.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/Components/Attributes.jsx`, './Modules/Description/Components/Attributes.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/module/Additional.jsx`, './Modules/Description/Additional.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/Components/Additional.jsx`, './Modules/Description/Components/Additional.jsx', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/module/style.js`, './Modules/Description/style.j', DescriptionSecret],
+    // [`http://${DescriptionIPPort}/style.js`, './Modules/Description/style.j', DescriptionSecret],
   ];
 
   moduleLocations.forEach((moduleTriplet) => {
@@ -118,7 +147,9 @@ if (mode === 'CSR') {
       //entry file for the service's modules are located, locally. (which were retrieved above when the line
       //of code satrting with moduleLocations.forEach  was executed, above)
       const services = [
-        [`http://${ImagesIP}:3003/itemImages/`, 'images', './Modules/Images/index.jsx'],
+        [`http://${ImagesIPPort}/itemImages/`, 'images', './Modules/Images/index.jsx'],
+        // [`http://${DelPickupIPPort}/availableAt/`, 'delPickup', './Modules/DelPickup/app.jsx'],
+        // [`http://${DescriptionIPPort}/descriptionObject/`, 'description', './Modules/Description/index.jsx'],
       ];
 
       const serviceModules = {};
@@ -146,7 +177,14 @@ if (mode === 'CSR') {
             const { itemImages } = dataResponses[0];
             const imagesSSR = ReactDOMServer.renderToString(React.createElement(serviceModules['images'], { itemImages }, null));
 
+            // const delPickupData = dataResponses[1];
+            // const delPickupSSR = ReactDOMServer.renderToString(React.createElement(serviceModules['delPickup'], { delPickupData }, null));
+
+            // const descriptionData = dataResponses[2];
+            // const descriptionSSR = ReactDOMServer.renderToString(React.createElement(serviceModules['description'], { descriptionData }, null));
+
             return generateHtmlSSR(imagesSSR);
+            // return generateHtmlSSR(imagesSSR, delPickupSSR, descriptionSSR);
           })
           .catch((err) => {
             console.log(err);
@@ -207,7 +245,7 @@ if (mode === 'CSR') {
   server.get('/itemImages/:itemId', (req, res) => {
     const { itemId } = req.params;
 
-    axios.get(`http://${ImagesIP}:3003/itemImages/${itemId}`)
+    axios.get(`http://${ImagesIPPort}/itemImages/${itemId}`)
       .then((response) => {
         const { data } = response;
         res.status(200).send(data);
@@ -222,8 +260,8 @@ if (mode === 'CSR') {
     const { itemId } = req.params;
     const { itemImages } = req.query;
 
-    axios.post(`http://${ImagesIP}:3003/addItemImages/${itemId}?itemImages=${itemImages}`)
-      .then((response) => {
+    axios.post(`http://${ImagesIPPort}/addItemImages/${itemId}?itemImages=${itemImages}`)
+      .then(() => {
         res.status(201).send(`Item ${itemId} successfully added to database`);
       })
       .catch((err) => {

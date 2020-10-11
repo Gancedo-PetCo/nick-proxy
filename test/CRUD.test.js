@@ -14,7 +14,7 @@ describe('The server\'s CRUD operations', () => {
 
           expect(status).toBe(200);
           expect(data).toBeDefined();
-          expect(typeof(data)).toBe('string');
+          expect(typeof (data)).toBe('string');
           expect(data).toContain('<!DOCTYPE html>');
           expect(data).toContain('<script src="/imagesBundle.js"></script>');
           expect(data).toContain('galleryMainImageDiv');

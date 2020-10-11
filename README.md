@@ -79,13 +79,13 @@ However, a load balancer is included in this project that is designed to work un
 3. Six proxy instances. Two proxy instances connected per service instance, per service
 4. The load balancer as the public facing server, connected to all the proxies.
 
-To get this system up an running:
+To get this system up and running:
 
 1. follow all the instructions in every service ReadMe to get a DB up and seeded and then three services up and running and connected to DB.
 2. Follow the above deployment instructions to launch 6 proxy servers. For each proxy, duplicate the bashscripts and save them in a different folder (PI1 through PI6 works well) so you can easily make unique scripts. bashScript3.sh should be unique for each instance while bashScript6.sh will be the same for each pair of instances connected to the same set of service instances.
 3. Now it is time to launch the load balancer server. Note that it is intended to be run on a T3A.2xlarge which costs money.
 4. Launch the instance with Ubuntu Server 16.04 LTS (HVM), SSD Volume Type 64-bit (x86)
-5. Give server an Elastic IP
+5. Give server an Elastic IP and ssh in. Note that, if you use bashScript3.sh, you will have to change ec2-user to ubuntu.
 6. Install nginx
 a. >sudo wget http://nginx.org/keys/nginx_signing.key
 b. >sudo apt-key add nginx_signing.key
